@@ -33,14 +33,14 @@ pkgs': # A pinned Nixpkgs revision for building the kernel
       (final: prev:
         with final; {
 
-          linux_reformNitrogen8m_latest = pkgs'.callPackage ./kernel.nix {
+          linux_reformNitrogen8m_latest = pkgs'.callPackage ../kernel {
             kernelPatches = [ ];
           };
 
           linuxPackages_reformNitrogen8m_latest =
             linuxPackagesFor final.linux_reformNitrogen8m_latest;
 
-          ubootReformImx8mq = callPackage ./uboot { };
+          ubootReformImx8mq = callPackage ../uboot { };
 
         })
     ];
@@ -49,7 +49,7 @@ pkgs': # A pinned Nixpkgs revision for building the kernel
   system.activationScripts.asound = ''
     if [ ! -e "/var/lib/alsa/asound.state" ]; then
       mkdir -p /var/lib/alsa
-      cp ${./initial-asound.state} /var/lib/alsa/asound.state
+      cp ${../initial-asound.state} /var/lib/alsa/asound.state
     fi
   '';
 }

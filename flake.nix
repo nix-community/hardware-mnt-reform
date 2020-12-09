@@ -9,12 +9,12 @@
     let
       installer = nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";
-        modules = [ self.nixosModules.default ./installer.nix ];
+        modules = [ self.nixosModules.default ./nixos/installer.nix ];
       };
     in {
 
       nixosModules.default =
-        import ./nixos-module.nix nixpkgs.legacyPackages.aarch64-linux;
+        import ./nixos nixpkgs.legacyPackages.aarch64-linux;
 
       packages.aarch64-linux = {
         inherit (installer.config.system.build) kernel initialRamdisk sdImage;

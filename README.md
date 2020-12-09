@@ -4,13 +4,13 @@ Requires an aarch64 host and Nix with [flake support](https://www.tweag.io/blog/
 
 ## Describe
 ```
-nix flake show "git+https://source.mntmn.com/ehmry/nixos-installer-mnt-reform.git"
-nix flake list-inputs "git+https://source.mntmn.com/ehmry/nixos-installer-mnt-reform.git"
+nix flake show "github:nix-community/hardware-mnt-reform"
+nix flake list-inputs "github:nix-community/hardware-mnt-reform"
 ```
 
 ## Build
 ```
-nix build "git+https://source.mntmn.com/ehmry/nixos-installer-mnt-reform.git" -L
+nix build "github:nix-community/hardware-mnt-reform" -L
 ```
 
 ## Verify
@@ -19,7 +19,6 @@ The generation of this image should be deterministic and match the following sha
 ```
 0ba80fbf466bcbbeffaea78af036b34abead25f06128979d864bae687b8a928a  result/sd-image/nixos-sd-image-20.09.20200831.4684bb9-aarch64-linux.img.bz2
 ```
-If it does not, please contact me and we can diffoscope images.
 
 ## Flash
 ```
@@ -35,22 +34,24 @@ To install NixOS to the NVMe device:
 * mount /dev/mmcblk1p1 at /mnt/boot (the live image)
 * run `nixos-generate-config --root /mnt`
 
-* Edit the file at `/mnt/etc/nixos/configuration.nix` to import configuration from the nixos-hardware repository:
+* Add a flake file at `/mnt/etc/nixos/flake.nix` to import configuration from this repository:
 ```
-{ config, pkgs, ... }:
-
 {
+  description = "Configuration for MNT Reform";
 
-  imports = let
-    nixosHardware = fetchGit {
-      url = "https://github.com/NixOS/nixos-hardware.git";
-      ref = "reform";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    reform.url = "github:nix-community/hardware-mnt-reform";
+  };
+
+  outputs = { self, nixpkgs, reform }: {
+
+    nixosConfigurations.reform = nixpkgs.lib.nixosSystem {
+      system = "aarch64-linux";
+      modules = [ reform.nixosModules.default ./configuration.nix ];
     };
-  in [
-    ./hardware-configuration.nix
-    "${nixosHardware}/mnt/reform2-nitrogen8m"
-  ];
 
+  };
 }
 ```
 
