@@ -83,6 +83,9 @@
             overlays = [ self.overlay ];
           };
 
+          programs.sway.extraPackages = # unbloat
+            lib.mkDefault (with pkgs; [ swaylock swayidle xwayland ]);
+
           system.activationScripts.asound = ''
             if [ ! -e "/var/lib/alsa/asound.state" ]; then
               mkdir -p /var/lib/alsa
