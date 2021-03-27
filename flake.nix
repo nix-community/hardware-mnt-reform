@@ -2,8 +2,7 @@
   description =
     "NixOS hardware configuration and bootable image for the MNT Reform";
 
-  inputs.nixpkgs.url = # The last version of Nixpkgs with linux_5_7
-    "github:NixOS/nixpkgs/4684bb931179e6a1cf398491cc2df97c03aa963f";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/release-20.09";
 
   outputs = { self, nixpkgs }:
     let
@@ -14,19 +13,26 @@
       };
     in {
 
-      overlay = final: prev: {
+      overlay = final: prev:
+        with final; {
 
-        inherit (nixpkgs') linux_5_7;
+          linux_5_7 = callPackage ./kernel/linux-5.7.nix {
+            kernelPatches = [
+              kernelPatches.bridge_stp_helper
+              kernelPatches.request_key_helper
+              kernelPatches.export_kernel_fpu_functions."5.3"
+            ];
+          };
 
-        linux_reformNitrogen8m_latest =
-          final.callPackage ./kernel { kernelPatches = [ ]; };
+          linux_reformNitrogen8m_latest =
+            callPackage ./kernel { kernelPatches = [ ]; };
 
-        linuxPackages_reformNitrogen8m_latest =
-          final.linuxPackagesFor final.linux_reformNitrogen8m_latest;
+          linuxPackages_reformNitrogen8m_latest =
+            linuxPackagesFor linux_reformNitrogen8m_latest;
 
-        ubootReformImx8mq = final.callPackage ./uboot { };
+          ubootReformImx8mq = callPackage ./uboot { };
 
-      };
+        };
 
       legacyPackages.aarch64-linux = nixpkgs'.extend self.overlay;
 
