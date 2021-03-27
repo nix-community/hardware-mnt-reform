@@ -11,13 +11,7 @@ nix flake list-inputs "github:nix-community/hardware-mnt-reform"
 ## Build
 ```
 nix build "github:nix-community/hardware-mnt-reform" -L
-```
-
-## Verify
-
-The generation of this image should be deterministic and match the following sha256 digest:
-```
-0ba80fbf466bcbbeffaea78af036b34abead25f06128979d864bae687b8a928a  result/sd-image/nixos-sd-image-20.09.20200831.4684bb9-aarch64-linux.img.bz2
+readlink result
 ```
 
 ## Flash
@@ -48,7 +42,7 @@ To install NixOS to the NVMe device:
 
     nixosConfigurations.reform = nixpkgs.lib.nixosSystem {
       system = "aarch64-linux";
-      modules = [ reform.nixosModules.default ./configuration.nix ];
+      modules = [ reform.nixosModule ./configuration.nix ];
     };
 
   };
