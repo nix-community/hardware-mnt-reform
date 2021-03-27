@@ -41,8 +41,18 @@
         {
           boot = {
             initrd = {
-              availableKernelModules = [ "nvme" "usbhid" ];
               kernelModules = [ "nwl-dsi" "imx-dcss" ];
+              availableKernelModules = # hack to remove ATA modules
+                lib.mkForce ([
+                  "cryptd"
+                  "dm_crypt"
+                  "dm_mod"
+                  "input_leds"
+                  "mmc_block"
+                  "nvme"
+                  "usbhid"
+                  "xhci_hcd"
+                ] ++ config.boot.initrd.luks.cryptoModules);
             };
             extraModprobeConfig = "options imx-dcss dcss_use_hdmi=0";
             kernelPackages =
