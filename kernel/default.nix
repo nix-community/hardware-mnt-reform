@@ -3,7 +3,7 @@
 let
   linux = linux_5_7;
   systemImageSrc = fetchgit {
-    url = "https://source.mntmn.com/MNT/reform-system-image.git";
+    url = "https://source.mnt.re/reform/reform-system-image.git";
     rev = "ef6bae4def9ef08ee388254abf4f1839d44c07a1";
     sha256 = "03nnwjzm8a0bk821p6sfscd04x3jgj29l16ccdkg10xcv2g2z5s8";
   } + "/reform2-imx8mq";
