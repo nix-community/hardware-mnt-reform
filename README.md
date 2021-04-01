@@ -45,7 +45,10 @@ To install NixOS to the NVMe device:
       modules = [
         reform.nixosModule
         ./configuration.nix
-        ({ pkgs, ... }: { nix.package = pkgs.nixFlakes; })
+        ({ pkgs, ... }: {
+          nix.package = pkgs.nixFlakes;
+          programs.sway.enable = true;
+        })
       ];
     };
 
