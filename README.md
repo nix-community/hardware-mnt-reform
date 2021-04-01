@@ -42,7 +42,11 @@ To install NixOS to the NVMe device:
 
     nixosConfigurations.reform = nixpkgs.lib.nixosSystem {
       system = "aarch64-linux";
-      modules = [ reform.nixosModule ./configuration.nix ];
+      modules = [
+        reform.nixosModule
+        ./configuration.nix
+        ({ pkgs, ... }: { nix.package = pkgs.nixFlakes; })
+      ];
     };
 
   };
