@@ -6,14 +6,26 @@
 with lib;
 
 let
-  rootfsImage = pkgs.callPackage (modulesPath + "/../lib/make-ext4-fs.nix") ({
+  uuidFrom = seed:
+    let digest = builtins.hashString "sha256" seed;
+    in (lib.lists.foldl ({ str, off }:
+      n:
+      let chunk = builtins.substring off n digest;
+      in {
+        str = if off == 0 then chunk else "${str}-${chunk}";
+        off = off + n;
+      }) {
+        str = "";
+        off = 0;
+      } [ 8 4 4 4 12 ]).str;
+
+  rootfsImage = pkgs.callPackage (modulesPath + "/../lib/make-ext4-fs.nix") {
     inherit (config.sdImage) storePaths;
     compressImage = false;
     populateImageCommands = config.sdImage.populateRootCommands;
     volumeLabel = "NIXOS_SD";
-  } // optionalAttrs (config.sdImage.rootPartitionUUID != null) {
-    uuid = config.sdImage.rootPartitionUUID;
-  });
+    uuid = uuidFrom config.system.nixos.label;
+  };
 in {
   options.sdImage = {
     imageName = mkOption {
@@ -36,23 +48,6 @@ in {
       example = literalExample "[ pkgs.stdenv ]";
       description = ''
         Derivations to be included in the Nix store in the generated SD image.
-      '';
-    };
-
-    firmwarePartitionName = mkOption {
-      type = types.str;
-      default = "FIRMWARE";
-      description = ''
-        Name of the filesystem which holds the boot firmware.
-      '';
-    };
-
-    rootPartitionUUID = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      example = "14e19a7b-0ae0-484d-9d54-43bd6fdc20c7";
-      description = ''
-        UUID for the filesystem on the main NixOS partition on the SD card.
       '';
     };
 
@@ -80,14 +75,6 @@ in {
 
   config = {
     fileSystems = {
-      "/boot/firmware" = {
-        device = "/dev/disk/by-label/${config.sdImage.firmwarePartitionName}";
-        fsType = "vfat";
-        # Alternatively, this could be removed from the configuration.
-        # The filesystem is not needed at runtime, it could be treated
-        # as an opaque blob instead of a discrete FAT32 filesystem.
-        options = [ "nofail" "noauto" ];
-      };
       "/" = {
         device = "/dev/disk/by-label/NIXOS_SD";
         fsType = "ext4";
