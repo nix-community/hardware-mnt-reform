@@ -83,3 +83,13 @@ in {
     (_: { patches = [ ./custom-firmware.patch ]; });
 }
 ```
+
+## Motherboard
+
+Build and flash:
+```
+nix build  "github:nix-community/hardware-mnt-reform#reform2-lpc-fw-«your-board-rev»" -L
+mount «board-rom» /mnt
+dd if=result/firmware.bin of="/mnt/firmware.bin" conv=nocreat,notrunc
+umount /mnt
+```

@@ -17,8 +17,8 @@
       inherit (installer.config.system.build) kernel initialRamdisk sdImage;
     } // (with pkgs;
       callPackages ./firmware.nix {
-        avrGcc = pkgsCross.avr.buildPackages.gcc;
-        avrBinutils = pkgsCross.avr.buildPackages.binutils;
+        avrStdenv = pkgsCross.avr.stdenv;
+        armEmbeddedStdenv = pkgsCross.arm-embedded.stdenv;
       });
 
     defaultPackage.aarch64-linux = self.packages.aarch64-linux.sdImage;
