@@ -16,7 +16,7 @@ readlink result
 
 ## Flash
 ```
-bzcat ./result/sd-image/nixos-sd-image-20.09.20200831.4684bb9-aarch64-linux.img.bz2 > /dev/mmcblk1
+bzcat ./result/sd-image/nixos-sd-image-*-aarch64-linux.img.bz2 > /dev/mmcblk1
 ```
 
 ## Boot
@@ -61,3 +61,25 @@ To install NixOS to the NVMe device:
 * Reboot?
 
 For more information see the  [NixOS manual](https://nixos.org/manual/nixos/stable/#sec-installation)
+
+
+# Firmware
+
+## Keyboard
+
+Flash the stock keyboard firmware (assuming the keyboard is in programming mode):
+```
+doas nix run "github:nix-community/hardware-mnt-reform#reform2-keyboard-fw" -L
+```
+
+Override the keyboard layout:
+```
+let
+  hardware-mnt-reform =
+    builtins.getFlake "github:nix-community/hardware-mnt-reform";
+in {
+  reform2-keyboard-fw =
+    hardware-mnt-reform.packages.aarch64-linux.reform2-keyboard-fw.overrideAttrs
+    (_: { patches = [ ./custom-firmware.patch ]; });
+}
+```
