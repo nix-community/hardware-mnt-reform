@@ -28,21 +28,22 @@ To install NixOS to the NVMe device:
 * mount /dev/mmcblk1p1 at /mnt/boot (the live image)
 * run `nixos-generate-config --root /mnt`
 
-* Add a flake file at `/mnt/etc/nixos/flake.nix` to import configuration from the NixOS-hardware repository:
+* Add a flake file at `/mnt/etc/nixos/flake.nix` to import configuration from this repository:
 ```
 {
   description = "Configuration for MNT Reform";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    reform.url = "github:nix-community/hardware-mnt-reform";
   };
 
-  outputs = { self, nixpkgs, nixos-hardware }: {
+  outputs = { self, nixpkgs, reform }: {
 
     nixosConfigurations.reform = nixpkgs.lib.nixosSystem {
       system = "aarch64-linux";
       modules = [
-        nixos-hardware.nixosModules.mnt-reform-nitrogen8m
+        reform.nixosModule
         ./configuration.nix
         ({ pkgs, ... }: {
           nix.package = pkgs.nixFlakes;
