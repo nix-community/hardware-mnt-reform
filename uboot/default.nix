@@ -4,7 +4,7 @@ buildUBoot rec {
   pname = "uboot-reform2-imx8mq";
   version = "2020-06-01";
   src = fetchgit {
-    url = "https://source.mntmn.com/MNT/reform-boundary-uboot.git";
+    url = "https://source.mnt.re/reform/reform-boundary-uboot.git";
     rev = version;
     sha256 = "0ychnwhisjqm0gzyz0nv9xynl9g114xmxpwz4vm0l5w6sc60jshw";
   };
