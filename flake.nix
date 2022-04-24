@@ -2,7 +2,7 @@
   description =
     "NixOS hardware configuration and bootable image for the MNT Reform";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/release-21.05";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/release-21.11";
 
   outputs = { self, nixpkgs }:
     let
