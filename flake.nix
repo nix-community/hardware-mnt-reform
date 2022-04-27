@@ -16,7 +16,7 @@
       overlay = final: prev:
         with final; {
 
-          linux_5_7 = callPackage ./kernel/linux-5.7.nix {
+          linux_5_17 = callPackage ./kernel/linux-5.17.nix {
             kernelPatches = [
               kernelPatches.bridge_stp_helper
               kernelPatches.request_key_helper
