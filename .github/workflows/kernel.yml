@@ -1,7 +1,6 @@
 name: "Populate kernel binary cache"
 
 on:
-  push:
   schedule:
   - cron: "0 * * * *"
 
