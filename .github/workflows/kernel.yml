@@ -1,0 +1,33 @@
+name: "Populate kernel binary cache"
+
+on:
+  push:
+  schedule:
+  - cron: "0 * * * *"
+
+jobs:
+  populate-kernel-binary-cache:
+    runs-on: ARM64
+    steps:
+    # Workaround to make install-nix-action work with self-hosted runners
+    - run: echo "$HOME/.nix-profile/bin" >> "${GITHUB_PATH}"
+    - run: echo "/nix/var/nix/profiles/default/bin" >> "${GITHUB_PATH}"
+    - uses: cachix/install-nix-action@v17
+    - uses: cachix/cachix-action@v10
+      with:
+        name: nix-community
+        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+    - run: >
+        nix build
+        github:${GITHUB_REPOSITORY}/${GITHUB_SHA}#kernel
+        github:${GITHUB_REPOSITORY}/${GITHUB_SHA}#initialRamdisk
+    - run: >
+        nix build
+        --recreate-lock-file --no-write-lock-file
+        github:${GITHUB_REPOSITORY}/${GITHUB_SHA}#kernel
+        github:${GITHUB_REPOSITORY}/${GITHUB_SHA}#initialRamdisk
+    - run: >
+        nix build
+        --override-input nixpkgs github:NixOS/nixpkgs/nixos-unstable
+        github:${GITHUB_REPOSITORY}/${GITHUB_SHA}#kernel
+        github:${GITHUB_REPOSITORY}/${GITHUB_SHA}#initialRamdisk

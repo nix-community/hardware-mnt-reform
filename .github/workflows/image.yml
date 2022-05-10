@@ -1,0 +1,19 @@
+name: "Build image"
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  build-image:
+    runs-on: ARM64
+    steps:
+    # Workaround to make install-nix-action work with self-hosted runners
+    - run: echo "$HOME/.nix-profile/bin" >> "${GITHUB_PATH}"
+    - run: echo "/nix/var/nix/profiles/default/bin" >> "${GITHUB_PATH}"
+    - uses: cachix/install-nix-action@v17
+    - uses: cachix/cachix-action@v10
+      with:
+        name: nix-community
+        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+    - run: nix build github:${GITHUB_REPOSITORY}/${GITHUB_SHA}
