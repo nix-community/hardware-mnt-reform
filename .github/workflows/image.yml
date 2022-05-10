@@ -17,3 +17,8 @@ jobs:
         name: nix-community
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
     - run: nix build github:${GITHUB_REPOSITORY}/${GITHUB_SHA}
+    - uses: actions/upload-artifact@v3
+      with:
+        name: nixos-mnt-reform
+        path: result/sd-image/*
+        if-no-files-found: error
