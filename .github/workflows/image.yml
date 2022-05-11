@@ -18,6 +18,7 @@ jobs:
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
     - run: nix build github:${GITHUB_REPOSITORY}/${GITHUB_SHA}
     - uses: actions/upload-artifact@v3
+      if: ${{ github.ref == 'refs/heads/master' }}
       with:
         name: nixos-mnt-reform
         path: result/sd-image/*
