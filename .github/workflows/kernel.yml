@@ -27,6 +27,11 @@ jobs:
         github:${GITHUB_REPOSITORY}/${GITHUB_SHA}#initialRamdisk
     - run: >
         nix build
+        --override-input nixpkgs github:NixOS/nixpkgs/release-21.11
+        github:${GITHUB_REPOSITORY}/${GITHUB_SHA}#kernel
+        github:${GITHUB_REPOSITORY}/${GITHUB_SHA}#initialRamdisk
+    - run: >
+        nix build
         --override-input nixpkgs github:NixOS/nixpkgs/nixos-unstable
         github:${GITHUB_REPOSITORY}/${GITHUB_SHA}#kernel
         github:${GITHUB_REPOSITORY}/${GITHUB_SHA}#initialRamdisk
