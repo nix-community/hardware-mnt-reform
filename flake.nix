@@ -16,7 +16,7 @@
       overlay = final: prev:
         with final; {
 
-          linux_5_17 = callPackage ./kernel/linux-5.17.nix {
+          linux_5_18 = callPackage ./kernel/linux-5.18.nix {
             kernelPatches = [
               kernelPatches.bridge_stp_helper
               kernelPatches.request_key_helper
@@ -70,6 +70,7 @@
               timeout = lib.mkDefault 1;
               # Cannot interact with U-Boot directly
             };
+            supportedFilesystems = lib.mkForce [ "vfat" "f2fs" "ntfs" "cifs" ];
           };
 
           boot.kernel.sysctl."vm.swappiness" = lib.mkDefault 1;
