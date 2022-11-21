@@ -47,7 +47,7 @@ in lib.overrideDerivation (buildLinux (args // {
   allowImportFromDerivation = true;
 
 } // (args.argsOverride or { }))) (attrs: {
-  prePatch = attrs.prePatch + ''
+  postPatch = attrs.postPatch + ''
     cp ${reformKernel}/*.dts arch/arm64/boot/dts/freescale/
     echo 'dtb-$(CONFIG_ARCH_MXC) += imx8mq-mnt-reform2.dtb imx8mq-mnt-reform2-hdmi.dtb' >> \
       arch/arm64/boot/dts/freescale/Makefile
