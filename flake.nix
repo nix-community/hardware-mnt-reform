@@ -14,27 +14,25 @@
     in {
 
       overlay = final: prev:
-        with final; {
-
-          linux_5_18 = callPackage ./kernel/linux-5.18.nix {
+        {
+          linux_6_1 = prev.callPackage ./kernel/linux-6.1.nix {
             kernelPatches = [
-              kernelPatches.bridge_stp_helper
-              kernelPatches.request_key_helper
-              kernelPatches.export_kernel_fpu_functions."5.3"
+              final.kernelPatches.bridge_stp_helper
+              final.kernelPatches.request_key_helper
             ];
           };
 
           linux_reformNitrogen8m_latest =
-            callPackage ./kernel { kernelPatches = [ ]; };
+            prev.callPackage ./kernel { kernelPatches = [ ]; };
 
           linuxPackages_reformNitrogen8m_latest =
-            linuxPackagesFor linux_reformNitrogen8m_latest;
+            final.linuxPackagesFor final.linux_reformNitrogen8m_latest;
 
-          ubootReformImx8mq = callPackage ./uboot { };
+          ubootReformImx8mq = prev.callPackage ./uboot { };
 
-          reformFirmware = callPackages ./firmware.nix {
-            avrStdenv = pkgsCross.avr.stdenv;
-            armEmbeddedStdenv = pkgsCross.arm-embedded.stdenv;
+          reformFirmware = prev.callPackages ./firmware.nix {
+            avrStdenv = prev.pkgsCross.avr.stdenv;
+            armEmbeddedStdenv = prev.pkgsCross.arm-embedded.stdenv;
           };
 
         };

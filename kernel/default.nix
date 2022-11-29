@@ -1,11 +1,11 @@
-{ stdenv, lib, buildLinux, fetchurl, fetchgit, linux_5_18, kernelPatches, ... }@args:
+{ stdenv, lib, buildLinux, fetchurl, fetchgit, linux_6_1, kernelPatches, ... }@args:
 
 let
-  linux = linux_5_18;
+  linux = linux_6_1;
   reformKernel = fetchgit {
     url = "https://source.mnt.re/reform/reform-debian-packages.git";
-    rev = "af47701128d6808e4581fa8f4ebe3990a345f928";
-    sha256 = "sha256-AMpRpFQTiEY2/8EF3X7NHQPaABn6Hz/yVQK8g8syiC0=";
+    rev = "503590cbdd5d3a7aea90bf35c1601a6b598edb78";
+    sha256 = "sha256-1e5ZeGQmUQyu8g+GGdG2jCRS9OJC7MAfnNectYrPJgg=";
   } + "/linux";
   kernelConfig = stdenv.mkDerivation {
     name = "kernel-config";
