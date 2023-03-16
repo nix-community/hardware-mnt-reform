@@ -37,11 +37,6 @@ in lib.overrideDerivation (buildLinux (args // {
       patch = null;
       extraConfig = builtins.readFile "${kernelConfig}/kernel-config";
     }
-    {
-      name = "MNT-Reform-imx8mq-config-local";
-      patch = null;
-      extraConfig = builtins.readFile ./kernel-config;
-    }
   ]);
 
   allowImportFromDerivation = true;
