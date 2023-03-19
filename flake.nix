@@ -64,8 +64,7 @@
             loader = {
               generic-extlinux-compatible.enable = lib.mkDefault true;
               grub.enable = lib.mkDefault false;
-              timeout = lib.mkDefault 1;
-              # Cannot interact with U-Boot directly
+              timeout = lib.mkDefault 2;
             };
             supportedFilesystems = lib.mkForce [ "vfat" "f2fs" "ntfs" "cifs" ];
           };
