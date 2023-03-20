@@ -57,7 +57,6 @@
                   "xhci_hcd"
                 ] ++ config.boot.initrd.luks.cryptoModules);
             };
-            extraModprobeConfig = "options imx-dcss dcss_use_hdmi=0";
             kernelPackages =
               lib.mkDefault pkgs.linuxPackages_reformNitrogen8m_latest;
             kernelParams =
