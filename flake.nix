@@ -43,24 +43,57 @@
 
         {
           boot = {
-            initrd = {
-              kernelModules = [ "nwl-dsi" "imx-dcss" ];
-              availableKernelModules = # hack to remove ATA modules
-                lib.mkForce ([
-                  "cryptd"
-                  "dm_crypt"
-                  "dm_mod"
-                  "input_leds"
-                  "mmc_block"
-                  "nvme"
-                  "usbhid"
-                  "xhci_hcd"
-                ] ++ config.boot.initrd.luks.cryptoModules);
-            };
+
             kernelPackages =
               lib.mkDefault pkgs.linuxPackages_reformNitrogen8m_latest;
-            kernelParams =
-              [ "console=ttymxc0,115200" "console=tty1" "pci=nomsi" ];
+
+            # Kernel params and modules are chosen to match the original System
+            # image (v3).
+            # See [gentoo wiki](https://wiki.gentoo.org/wiki/MNT_Reform#u-boot).
+            kernelParams = [
+              "console=ttymxc0,115200"
+              "console=tty1"
+              "pci=nomsi"
+              "cma=512M"
+              "no_console_suspend"
+              "ro"
+            ];
+
+            # The module load order is significant, It is derived from this
+            # custom script from the official system image:
+            # https://source.mnt.re/reform/reform-tools/-/blob/c189f5ebb166d61c5f17c15a3c94fdb871cfb5c2/initramfs-tools/reform
+            initrd.kernelModules = [
+              "nwl-dsi"
+              "imx-dcss"
+              "reset_imx7"
+              "mux_mmio"
+              "fixed"
+              "i2c-imx"
+              "fan53555"
+              "i2c_mux_pca954x"
+              "pwm_imx27"
+              "pwm_bl"
+              "panel_edp"
+              "ti_sn65dsi86"
+              "phy-fsl-imx8-mipi-dphy"
+              "mxsfb"
+              "usbhid"
+              "imx8mq-interconnect"
+              "nvme"
+            ];
+
+            # hack to remove ATA modules
+            initrd.availableKernelModules = lib.mkForce ([
+              "cryptd"
+              "dm_crypt"
+              "dm_mod"
+              "input_leds"
+              "mmc_block"
+              "nvme"
+              "usbhid"
+              "xhci_hcd"
+            ] ++ config.boot.initrd.luks.cryptoModules);
+
             loader = {
               generic-extlinux-compatible.enable = lib.mkDefault true;
               grub.enable = lib.mkDefault false;
