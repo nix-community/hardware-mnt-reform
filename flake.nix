@@ -2,7 +2,7 @@
   description =
     "NixOS hardware configuration and bootable image for the MNT Reform";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
 
   outputs = { self, nixpkgs }:
     let
@@ -14,27 +14,25 @@
     in {
 
       overlay = final: prev:
-        with final; {
-
-          linux_5_18 = callPackage ./kernel/linux-5.18.nix {
+        {
+          linux_6_1 = prev.callPackage ./kernel/linux-6.1.nix {
             kernelPatches = [
-              kernelPatches.bridge_stp_helper
-              kernelPatches.request_key_helper
-              kernelPatches.export_kernel_fpu_functions."5.3"
+              final.kernelPatches.bridge_stp_helper
+              final.kernelPatches.request_key_helper
             ];
           };
 
           linux_reformNitrogen8m_latest =
-            callPackage ./kernel { kernelPatches = [ ]; };
+            prev.callPackage ./kernel { kernelPatches = [ ]; };
 
           linuxPackages_reformNitrogen8m_latest =
-            linuxPackagesFor linux_reformNitrogen8m_latest;
+            final.linuxPackagesFor final.linux_reformNitrogen8m_latest;
 
-          ubootReformImx8mq = callPackage ./uboot { };
+          ubootReformImx8mq = prev.callPackage ./uboot { };
 
-          reformFirmware = callPackages ./firmware.nix {
-            avrStdenv = pkgsCross.avr.stdenv;
-            armEmbeddedStdenv = pkgsCross.arm-embedded.stdenv;
+          reformFirmware = prev.callPackages ./firmware.nix {
+            avrStdenv = prev.pkgsCross.avr.stdenv;
+            armEmbeddedStdenv = prev.pkgsCross.arm-embedded.stdenv;
           };
 
         };
@@ -45,30 +43,61 @@
 
         {
           boot = {
-            initrd = {
-              kernelModules = [ "nwl-dsi" "imx-dcss" ];
-              availableKernelModules = # hack to remove ATA modules
-                lib.mkForce ([
-                  "cryptd"
-                  "dm_crypt"
-                  "dm_mod"
-                  "input_leds"
-                  "mmc_block"
-                  "nvme"
-                  "usbhid"
-                  "xhci_hcd"
-                ] ++ config.boot.initrd.luks.cryptoModules);
-            };
-            extraModprobeConfig = "options imx-dcss dcss_use_hdmi=0";
+
             kernelPackages =
               lib.mkDefault pkgs.linuxPackages_reformNitrogen8m_latest;
-            kernelParams =
-              [ "console=ttymxc0,115200" "console=tty1" "pci=nomsi" ];
+
+            # Kernel params and modules are chosen to match the original System
+            # image (v3).
+            # See [gentoo wiki](https://wiki.gentoo.org/wiki/MNT_Reform#u-boot).
+            kernelParams = [
+              "console=ttymxc0,115200"
+              "console=tty1"
+              "pci=nomsi"
+              "cma=512M"
+              "no_console_suspend"
+              "ro"
+            ];
+
+            # The module load order is significant, It is derived from this
+            # custom script from the official system image:
+            # https://source.mnt.re/reform/reform-tools/-/blob/c189f5ebb166d61c5f17c15a3c94fdb871cfb5c2/initramfs-tools/reform
+            initrd.kernelModules = [
+              "nwl-dsi"
+              "imx-dcss"
+              "reset_imx7"
+              "mux_mmio"
+              "fixed"
+              "i2c-imx"
+              "fan53555"
+              "i2c_mux_pca954x"
+              "pwm_imx27"
+              "pwm_bl"
+              "panel_edp"
+              "ti_sn65dsi86"
+              "phy-fsl-imx8-mipi-dphy"
+              "mxsfb"
+              "usbhid"
+              "imx8mq-interconnect"
+              "nvme"
+            ];
+
+            # hack to remove ATA modules
+            initrd.availableKernelModules = lib.mkForce ([
+              "cryptd"
+              "dm_crypt"
+              "dm_mod"
+              "input_leds"
+              "mmc_block"
+              "nvme"
+              "usbhid"
+              "xhci_hcd"
+            ] ++ config.boot.initrd.luks.cryptoModules);
+
             loader = {
               generic-extlinux-compatible.enable = lib.mkDefault true;
               grub.enable = lib.mkDefault false;
-              timeout = lib.mkDefault 1;
-              # Cannot interact with U-Boot directly
+              timeout = lib.mkDefault 2;
             };
             supportedFilesystems = lib.mkForce [ "vfat" "f2fs" "ntfs" "cifs" ];
           };

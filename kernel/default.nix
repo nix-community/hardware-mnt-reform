@@ -1,11 +1,11 @@
-{ stdenv, lib, buildLinux, fetchurl, fetchgit, linux_5_18, kernelPatches, ... }@args:
+{ stdenv, lib, buildLinux, fetchurl, fetchgit, linux_6_1, kernelPatches, ... }@args:
 
 let
-  linux = linux_5_18;
+  linux = linux_6_1;
   reformKernel = fetchgit {
     url = "https://source.mnt.re/reform/reform-debian-packages.git";
-    rev = "af47701128d6808e4581fa8f4ebe3990a345f928";
-    sha256 = "sha256-AMpRpFQTiEY2/8EF3X7NHQPaABn6Hz/yVQK8g8syiC0=";
+    rev = "503590cbdd5d3a7aea90bf35c1601a6b598edb78";
+    sha256 = "sha256-1e5ZeGQmUQyu8g+GGdG2jCRS9OJC7MAfnNectYrPJgg=";
   } + "/linux";
   kernelConfig = stdenv.mkDerivation {
     name = "kernel-config";
@@ -37,17 +37,12 @@ in lib.overrideDerivation (buildLinux (args // {
       patch = null;
       extraConfig = builtins.readFile "${kernelConfig}/kernel-config";
     }
-    {
-      name = "MNT-Reform-imx8mq-config-local";
-      patch = null;
-      extraConfig = builtins.readFile ./kernel-config;
-    }
   ]);
 
   allowImportFromDerivation = true;
 
 } // (args.argsOverride or { }))) (attrs: {
-  prePatch = attrs.prePatch + ''
+  postPatch = attrs.postPatch + ''
     cp ${reformKernel}/*.dts arch/arm64/boot/dts/freescale/
     echo 'dtb-$(CONFIG_ARCH_MXC) += imx8mq-mnt-reform2.dtb imx8mq-mnt-reform2-hdmi.dtb' >> \
       arch/arm64/boot/dts/freescale/Makefile
