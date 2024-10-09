@@ -1,4 +1,4 @@
-final: prev: {
+final: prev: with final; {
 
   linux_5_18 = callPackage ./kernel/linux-5.18.nix {
     kernelPatches = [
@@ -8,8 +8,10 @@ final: prev: {
     ];
   };
 
+  linux_mnt-reform-aarch64-latest = callPackage ./linux/mnt-reform-arm64 { kernelPatches = [ ]; };
   linux_reformNitrogen8m_latest = callPackage ./kernel { kernelPatches = [ ]; };
 
+  linuxPackages_mnt-reform-aarch64 = linuxPackagesFor linux_mnt-reform-aarch64-latest;
   linuxPackages_reformNitrogen8m_latest = linuxPackagesFor linux_reformNitrogen8m_latest;
 
   ubootReformImx8mq = callPackage ./uboot { };
