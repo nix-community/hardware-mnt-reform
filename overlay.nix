@@ -15,6 +15,7 @@ final: prev: with final; {
   linuxPackages_reformNitrogen8m_latest = linuxPackagesFor linux_reformNitrogen8m_latest;
 
   ubootReformImx8mq = callPackage ./uboot { };
+  ubootReformImx8mp = callPackage ./reform-imx8mp-uboot { };
 
   reformFirmware = callPackages ./firmware.nix {
     avrStdenv = pkgsCross.avr.stdenv;
