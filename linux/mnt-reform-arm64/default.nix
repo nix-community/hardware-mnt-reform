@@ -25,17 +25,18 @@ let
         lib.filesystem.listFilesRecursive "${reformDebianPackages}/linux/patches6.10/imx8mp-mnt-pocket-reform"
       )
     );
-    extraConfig = builtins.readFile (
-      runCommandLocal "mnt-kernel-config" { src = reformDebianPackages; } ''
-        sed \
-          -e '/DRM_PANEL_JDI_LT070ME05000/d' \
-          -e '/DWMAC_MESON/d' \
-          -e 's/CONFIG_//' \
-          -e 's/=/ /' \
-          <$src/linux/config >$out
-      ''
-    );
-    extraStructuredConfig = import ./config { inherit lib; };
+    extraConfig =
+      (builtins.readFile (
+        runCommandLocal "mnt-kernel-config" { src = reformDebianPackages; } ''
+          sed \
+            -e '/DRM_PANEL_JDI_LT070ME05000/d' \
+            -e '/DWMAC_MESON/d' \
+            -e 's/CONFIG_//' \
+            -e 's/=/ /' \
+            <$src/linux/config >$out
+        ''
+      ))
+      + (builtins.readFile ./config);
   };
   b = a.overrideAttrs (
     {
