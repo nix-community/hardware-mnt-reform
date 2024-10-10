@@ -29,9 +29,11 @@
     extraModprobeConfig = "options imx-dcss dcss_use_hdmi=0";
     kernelPackages = lib.mkDefault pkgs.pkgsFromX86.linuxPackages_mnt-pocket-reform-arm64-latest;
     kernelParams = [
-      "console=ttymxc0,115200"
+      "cma=256MB"
       "console=tty1"
-      "pci=nomsi"
+      "console=ttymxc0,115200"
+      "fbcon=rotate:3"
+      "pci=pcie_bus_perf"
     ];
     loader = {
       generic-extlinux-compatible.enable = lib.mkDefault true;
