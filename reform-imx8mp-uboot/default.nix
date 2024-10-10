@@ -27,6 +27,7 @@ buildUBoot {
     cp ${mnt}/lpddr4*.bin ./
     cp "${mnt}/imx8mp-mnt-pocket-reform.dts" arch/arm/dts/imx8mp-nitrogen8mp.dts
     cp "${mnt}/${defconfig}" configs/
+    echo 'dtb-$(CONFIG_ARCH_IMX8M) += imx8mp-mnt-pocket-reform.dtb' >> arch/arm/dts/Makefile
   '';
   patches = [ "${mnt}/nitrogen8mp.patch" ];
   extraMeta.platforms = [ "aarch64-linux" ];

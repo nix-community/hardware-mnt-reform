@@ -47,8 +47,14 @@ let
         postPatch
         + ''
           cp \
-            ${reformDebianPackages}/linux/imx8mp-mnt-pocket-reform.dts \
+            ${reformDebianPackages}/linux/imx8m*.dts \
             arch/arm64/boot/dts/freescale/
+          cat << EOF >> arch/arm64/boot/dts/freescale/Makefile
+          dtb-\$(CONFIG_ARCH_MXC) += imx8mp-mnt-reform2.dtb
+          dtb-\$(CONFIG_ARCH_MXC) += imx8mq-mnt-reform2-hdmi.dtb
+          dtb-\$(CONFIG_ARCH_MXC) += imx8mp-mnt-pocket-reform.dtb
+
+          EOF
         '';
     }
   );
