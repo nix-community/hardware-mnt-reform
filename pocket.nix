@@ -1,5 +1,7 @@
 let
-  nixpkgs = import <nixpkgs>;
+  nixpkgs = import (
+    builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/5633bcff0c6162b9e4b5f1264264611e950c8ec7.tar.gz"
+  );
   overlay = import ./overlay.nix;
   pkgsFromX86 = nixpkgs {
     localSystem = "x86_64-linux";
