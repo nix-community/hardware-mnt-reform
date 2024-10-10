@@ -19,7 +19,7 @@ let
       efiBootStub = false;
       iwlwifi = false;
     };
-    # extraMakeFlags = [ "LOADADDR=0x40480000" ];
+    extraMakeFlags = [ "LOADADDR=0x40480000" ];
     kernelPatches = (
       map (patch: { inherit patch; }) (
         lib.filesystem.listFilesRecursive "${reformDebianPackages}/linux/patches6.10/imx8mp-mnt-pocket-reform"
