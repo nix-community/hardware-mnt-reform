@@ -1,10 +1,20 @@
-{
-  pkgs ? import <nixpkgs> {
+let
+  nixpkgs = import <nixpkgs>;
+  overlay = import ./overlay.nix;
+  pkgsFromX86 = nixpkgs {
+    localSystem = "x86_64-linux";
     crossSystem = "aarch64-linux";
-    overlays = [ (import ./overlay.nix) ];
-  },
-}:
-
+    overlays = [ overlay ];
+  };
+  pkgs = nixpkgs {
+    localSystem = "aarch64-linux";
+    crossSystem = "aarch64-linux";
+    overlays = [
+      (final: prev: { inherit pkgsFromX86; })
+      overlay
+    ];
+  };
+in
 rec {
   inherit pkgs;
 

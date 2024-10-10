@@ -20,6 +20,11 @@ let
       iwlwifi = false;
     };
     # extraMakeFlags = [ "LOADADDR=0x40480000" ];
+    kernelPatches = (
+      map (patch: { inherit patch; }) (
+        lib.filesystem.listFilesRecursive "${reformDebianPackages}/linux/patches6.10/imx8mp-mnt-pocket-reform"
+      )
+    );
     extraConfig = builtins.readFile (
       runCommandLocal "mnt-kernel-config" { src = reformDebianPackages; } ''
         sed \
@@ -30,11 +35,7 @@ let
           <$src/linux/config >$out
       ''
     );
-    kernelPatches = (
-      map (patch: { inherit patch; }) (
-        lib.filesystem.listFilesRecursive "${reformDebianPackages}/linux/patches6.10/imx8mp-mnt-pocket-reform"
-      )
-    );
+    extraStructuredConfig = import ./config { inherit lib; };
   };
   b = a.overrideAttrs (
     {
