@@ -1,19 +1,14 @@
-let
-  nixpkgs = builtins.fetchTarball
-    "https://github.com/NixOS/nixpkgs/archive/5633bcff0c6162b9e4b5f1264264611e950c8ec7.tar.gz";
+{
+  nixpkgs ? builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/5633bcff0c6162b9e4b5f1264264611e950c8ec7.tar.gz",
+}:
+
+rec {
   overlay = import ./overlay.nix;
-  pkgsFromX86 = import nixpkgs {
-    localSystem = "x86_64-linux";
+
+  pkgs = import nixpkgs {
     crossSystem = "aarch64-linux";
     overlays = [ overlay ];
   };
-  pkgs = import nixpkgs {
-    localSystem = "aarch64-linux";
-    crossSystem = "aarch64-linux";
-    overlays = [ (final: prev: { inherit pkgsFromX86; }) overlay ];
-  };
-in rec {
-  inherit pkgs;
 
   pocketModule = import ./nixos/pocket.nix;
 

@@ -27,7 +27,7 @@
         );
     };
     extraModprobeConfig = "options imx-dcss dcss_use_hdmi=0";
-    kernelPackages = lib.mkDefault pkgs.pkgsFromX86.linuxPackages_mnt-pocket-reform-arm64-latest;
+    kernelPackages = lib.mkDefault pkgs.linuxPackages_mnt-pocket-reform-arm64-latest;
     kernelParams = [
       "cma=256MB"
       "console=tty1"

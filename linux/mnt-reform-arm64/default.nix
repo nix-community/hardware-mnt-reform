@@ -36,7 +36,7 @@ let
             <$src/linux/config >$out
         ''
       ))
-      + (builtins.readFile ./config);
+      + (builtins.readFile ./kernel-config);
   };
   b = a.overrideAttrs (
     {
