@@ -12,8 +12,11 @@
       "ath10k_sdio"
     ];
     initrd = {
-      availableKernelModules = lib.mkForce [ ];
-      kernelModules = [ "imx_bus" ];
+      availableKernelModules = lib.mkForce [
+        "nvme"
+        "mmc_block"
+      ];
+      # kernelModules = [ "imx_bus" ];
     };
     kernelPackages = lib.mkDefault pkgs.linuxPackages_mnt-pocket-reform-arm64-latest;
     kernelParams = [
