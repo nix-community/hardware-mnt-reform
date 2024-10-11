@@ -20,11 +20,16 @@ let
       efiBootStub = false;
       iwlwifi = false;
     };
-    # extraMakeFlags = [ "LOADADDR=0x40480000" ];
+    extraMakeFlags = [ "LOADADDR=0x40480000" ];
     kernelPatches = (
-      map (patch: { name = builtins.baseNameOf patch; inherit patch; }) (
-        lib.filesystem.listFilesRecursive "${reformDebianPackages}/linux/patches6.10/imx8mp-mnt-pocket-reform"
-      )
+      map
+        (patch: {
+          name = builtins.baseNameOf patch;
+          inherit patch;
+        })
+        (
+          lib.filesystem.listFilesRecursive "${reformDebianPackages}/linux/patches6.10/imx8mp-mnt-pocket-reform"
+        )
     );
     extraConfig =
       (builtins.readFile (
@@ -60,24 +65,31 @@ let
         '';
     }
   );
-in
-linuxManualConfig rec {
-  pname = "linux-reform-debian";
-  version = "6.11.2";
-  src = fetchurl {
-    url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${version}.tar.xz";
-    hash = "sha256-7J73oLnOu1WUDh74eh+eEASxBFahGdw4a7PlZbDTnEI=";
+  c = linuxManualConfig rec {
+    pname = "linux-reform-debian";
+    version = "6.11.2";
+    src = fetchurl {
+      url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${version}.tar.xz";
+      hash = "sha256-7J73oLnOu1WUDh74eh+eEASxBFahGdw4a7PlZbDTnEI=";
+    };
+    configfile = ../../config-6.11.2-mnt-reform-arm64;
+    kernelPatches =
+      let
+        reformDebianPackages = fetchgit {
+          url = "https://source.mnt.re/reform/reform-debian-packages";
+          rev = "0897ab8a1a0d3034d5b7d6a9e77c4ae1f28651eb";
+          hash = "sha256-vh47lqoEqN6cjHzddFHFrA1A5BWW1eIrt5fzUf/oNko=";
+        };
+      in
+      (map
+        (patch: {
+          name = builtins.baseNameOf patch;
+          inherit patch;
+        })
+        (
+          lib.filesystem.listFilesRecursive "${reformDebianPackages}/linux/patches6.11/imx8mp-mnt-pocket-reform"
+        )
+      );
   };
-  configfile = ../../config-6.11.2-mnt-reform-arm64;
-  kernelPatches =
-    let
-      reformDebianPackages = fetchgit {
-        url = "https://source.mnt.re/reform/reform-debian-packages";
-        rev = "0897ab8a1a0d3034d5b7d6a9e77c4ae1f28651eb";
-        hash = "sha256-vh47lqoEqN6cjHzddFHFrA1A5BWW1eIrt5fzUf/oNko=";
-      };
-    in
-    (map (patch: { name = builtins.baseNameOf patch; inherit patch; }) (
-      lib.filesystem.listFilesRecursive "${reformDebianPackages}/linux/patches6.11/imx8mp-mnt-pocket-reform"
-    ));
-}
+in
+b
