@@ -16,6 +16,8 @@ let
     sha256 = "sha256-vh47lqoEqN6cjHzddFHFrA1A5BWW1eIrt5fzUf/oNko=";
   };
   a = linux_6_10.override {
+    autoModules = false;
+    preferBuiltin = false;
     features = {
       efiBootStub = false;
       iwlwifi = false;
