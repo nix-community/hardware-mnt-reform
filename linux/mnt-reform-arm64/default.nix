@@ -22,7 +22,7 @@ let
     };
     # extraMakeFlags = [ "LOADADDR=0x40480000" ];
     kernelPatches = (
-      map (patch: { inherit patch; }) (
+      map (patch: { name = builtins.baseNameOf patch; inherit patch; }) (
         lib.filesystem.listFilesRecursive "${reformDebianPackages}/linux/patches6.10/imx8mp-mnt-pocket-reform"
       )
     );
@@ -77,7 +77,7 @@ linuxManualConfig rec {
         hash = "sha256-vh47lqoEqN6cjHzddFHFrA1A5BWW1eIrt5fzUf/oNko=";
       };
     in
-    (map (patch: { inherit patch; }) (
+    (map (patch: { name = builtins.baseNameOf patch; inherit patch; }) (
       lib.filesystem.listFilesRecursive "${reformDebianPackages}/linux/patches6.11/imx8mp-mnt-pocket-reform"
     ));
 }
