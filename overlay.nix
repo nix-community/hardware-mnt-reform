@@ -8,9 +8,7 @@ final: prev: with final; {
     ];
   };
 
-  linux_mnt-pocket-reform-arm64-latest = callPackage ./linux/mnt-reform-arm64 {
-    kernelPatches = [ ];
-  };
+  linux_mnt-pocket-reform-arm64-latest = callPackage ./linux/mnt-reform-arm64 { };
   linux_reformNitrogen8m_latest = callPackage ./kernel { kernelPatches = [ ]; };
 
   linuxPackages_mnt-pocket-reform-arm64-latest = linuxPackagesFor linux_mnt-pocket-reform-arm64-latest;
