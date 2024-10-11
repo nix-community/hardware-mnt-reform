@@ -23,7 +23,6 @@ let
       iwlwifi = false;
       rust = false;
     };
-    extraMakeFlags = [ "LOADADDR=0x40480000" ];
     structuredExtraConfig =
       with lib.kernel;
       builtins.mapAttrs (_: lib.mkForce) {
