@@ -7,32 +7,21 @@
 {
   boot = {
     initrd = {
-      kernelModules = [
-        "nwl-dsi"
-        "imx-dcss"
+      kernelModules = [ "imx_bus" ];
+      blacklistedKernelModules = [
+        "imx8m-ddrc"
+        "raid456"
+        "ath10k_sdio"
       ];
-      availableKernelModules = # hack to remove ATA modules
-        lib.mkForce (
-          [
-            "cryptd"
-            "dm_crypt"
-            "dm_mod"
-            "input_leds"
-            "mmc_block"
-            "nvme"
-            "usbhid"
-            "xhci_hcd"
-          ]
-          ++ config.boot.initrd.luks.cryptoModules
-        );
     };
-    extraModprobeConfig = "options imx-dcss dcss_use_hdmi=0";
     kernelPackages = lib.mkDefault pkgs.linuxPackages_mnt-pocket-reform-arm64-latest;
     kernelParams = [
       "cma=256MB"
       "console=tty1"
       "console=ttymxc0,115200"
       "fbcon=rotate:3"
+      "no_console_suspend"
+      "nvme_core.default_ps_max_latency_us=0"
       "pci=pcie_bus_perf"
     ];
     loader = {
