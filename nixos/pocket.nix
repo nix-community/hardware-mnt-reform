@@ -6,13 +6,14 @@
 }:
 {
   boot = {
+    blacklistedKernelModules = [
+      "imx8m-ddrc"
+      "raid456"
+      "ath10k_sdio"
+    ];
     initrd = {
+      availableKernelModules = lib.mkForce [ ];
       kernelModules = [ "imx_bus" ];
-      blacklistedKernelModules = [
-        "imx8m-ddrc"
-        "raid456"
-        "ath10k_sdio"
-      ];
     };
     kernelPackages = lib.mkDefault pkgs.linuxPackages_mnt-pocket-reform-arm64-latest;
     kernelParams = [
