@@ -20,7 +20,11 @@ in rec {
   installer = import "${nixpkgs}/nixos/lib/eval-config.nix" {
     inherit pkgs;
     system = "aarch64-linux";
-    modules = [ ./nixos/pocket-installer.nix pocketModule ];
+    modules = [
+      ./nixos/pocket-installer.nix
+      pocketModule
+      { sdImage.compressCommand = null; }
+    ];
   };
 
   inherit (installer.config.system.build) kernel initialRamdisk sdImage;

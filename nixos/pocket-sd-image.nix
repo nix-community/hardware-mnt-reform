@@ -65,7 +65,7 @@ in {
     compressCommand = mkOption {
       type = types.nullOr types.str;
       example = literalExample "$${pkgs.lz4}/bin/lz4 --rm";
-      default = "${pkgs.bzip2}/bin/bzip2";
+      default = "${pkgs.lzip}/bin/lzip";
       description = ''
         Command used to compress the SD image.
       '';
