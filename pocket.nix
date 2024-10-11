@@ -1,11 +1,13 @@
 {
   nixpkgs ? builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/5633bcff0c6162b9e4b5f1264264611e950c8ec7.tar.gz",
+  localSystem ? builtins.localSystem
 }:
 
 rec {
   overlay = import ./overlay.nix;
 
   pkgs = import nixpkgs {
+    inherit localSystem;
     crossSystem = "aarch64-linux";
     overlays = [ overlay ];
   };
