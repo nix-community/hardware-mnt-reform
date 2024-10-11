@@ -83,8 +83,6 @@ in {
 
     sdImage.storePaths = [ config.system.build.toplevel ];
 
-    system.build.uboot = pkgs.ubootReformImx8mq;
-
     system.build.sdImage = pkgs.callPackage
       ({ runCommand, dosfstools, e2fsprogs, mtools, libfaketime, utillinux }:
         runCommand config.sdImage.imageName {
@@ -116,9 +114,6 @@ in {
           # Copy the rootfs into the SD image
           eval $(partx $img -o START,SECTORS --nr 1 --pairs)
           dd conv=notrunc if=./root-fs.img of=$img seek=$START count=$SECTORS
-
-          # install u-boot for i.MX8M
-          dd conv=notrunc if=${config.system.build.ubootFlashBin} of=$img bs=1k seek=33
 
           test -n "$compressCommand" && $compressCommand $img
 
